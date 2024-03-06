@@ -7,9 +7,11 @@ import { deleteContact } from "../api/deleteContact";
 
 import { ContactContext } from "@/contexts/ContactContext";
 
+import { Contact } from "../types";
+
 export const ContactList = () => {
   const { contacts, setContacts } = useContext(ContactContext);
-  const [currentContact, setCurrentContact] = useState(null);
+  const [currentContact, setCurrentContact] = useState<Contact | undefined>();
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
@@ -24,18 +26,18 @@ export const ContactList = () => {
     fetchContacts();
   }, []);
 
-  const handleEdit = async (e, id) => {
+  const handleEdit = async (e: React.FormEvent, id: string) => {
     e.preventDefault();
 
     const data = {
-      name: newName,
-      email: newEmail,
-      phoneNumber: newPhone,
+      name: newName ? newName : currentContact.name,
+      email: newEmail ? newEmail : currentContact.email,
+      phoneNumber: newPhone ? newPhone : currentContact.phone,
     };
 
     const newContact = await updateContact(id, data);
 
-    const updatedContacts = contacts.map((contact) =>
+    const updatedContacts = contacts.map((contact: Contact) =>
       contact.id === id ? newContact : contact,
     );
 
@@ -43,37 +45,39 @@ export const ContactList = () => {
     setCurrentContact(null);
   };
 
-  const handleDelete = async (id) => {
-    deleteContact(id);
+  const handleDelete = async (id: number | string) => {
+    await deleteContact(id);
 
-    setContacts(contacts.filter((contact) => contact.id !== id));
+    setContacts(contacts.filter((contact: Contact) => contact.id !== id));
   };
 
   return (
     <>
-      <div className="my-4 flex flex-col gap-y-2">
-        {contacts.length > 0 &&
-          contacts.map((contact, index) => (
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {contacts &&
+          contacts.map((contact, index: number) => (
             <div
               key={index}
-              className="flex flex-row justify-evenly gap-x-5 rounded-lg bg-gray-200 p-2"
+              className="flex flex-col justify-evenly gap-y-2 rounded-lg bg-gray-200 p-6"
             >
-              <span className="text-2xl font-semibold leading-tight">
+              <span className="text-2xl font-bold leading-tight">
                 {contact.name}
               </span>
-              <span className="text-2xl font-semibold leading-tight">
+              <span className="font-md text-xl leading-tight">
                 {contact.email}
               </span>
-              <span className="text-2xl font-semibold leading-tight">
+              <span className="font-md text-xl leading-tight">
                 {contact.phoneNumber}
               </span>
-              <Button onClick={() => setCurrentContact(contact)}>Edit</Button>
-              <Button
-                onClick={() => handleDelete(contact.id)}
-                variant="destructive"
-              >
-                Delete
-              </Button>
+              <div className="flex flex-row justify-end gap-x-2 mt-4">
+                <Button onClick={() => setCurrentContact(contact)} variant="ghost">Edit</Button>
+                <Button
+                  onClick={() => handleDelete(contact.id)}
+                  variant="destructive"
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
           ))}
       </div>
