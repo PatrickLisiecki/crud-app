@@ -15,15 +15,17 @@ export const Contacts = () => {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col bg-gray-100 px-24 py-12">
-      <div className="flex flex-row items-center gap-x-4">
-        <h1 className="text-3xl font-bold sm:text-5xl md:text-6xl">Contacts</h1>
-        <Button onClick={() => toggleIsCreating()} variant="default">
-          Create <Plus className="ml-2 h-4 w-4" />
-        </Button>
-        <Link to="/">
-          <Button variant="default">Home</Button>
-        </Link>
+    <div className="md:py-18 flex min-h-screen w-full flex-col bg-gray-100 p-12 md:px-24">
+      <div className="flex flex-col items-center gap-x-4 gap-y-2 sm:flex-row sm:gap-y-0">
+        <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl">Contacts</h1>
+        <div className="flex flex-row gap-x-2">
+          <Button onClick={() => toggleIsCreating()} variant="default">
+            Create <Plus className="ml-2 h-4 w-4" />
+          </Button>
+          <Link to="/">
+            <Button variant="default">Home</Button>
+          </Link>
+        </div>
       </div>
       <CreateContact isOpen={isCreating} toggleIsOpen={toggleIsCreating} />
       <ContactList />
