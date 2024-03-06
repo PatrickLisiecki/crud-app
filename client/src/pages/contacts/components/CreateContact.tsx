@@ -80,13 +80,13 @@ export const CreateContact = ({ isOpen, toggleIsOpen }: CreateContactProps) => {
           <div className="mt-4 flex w-full flex-row justify-evenly">
             <Button
               type="button"
-              variant="destructive"
               size="lg"
+              variant="destructive"
               onClick={() => toggleIsOpen()}
             >
               Cancel
             </Button>
-            <Button type="submit" size="lg">
+            <Button type="submit" size="lg" variant="confirm">
               Submit
             </Button>
           </div>
