@@ -1,9 +1,10 @@
 import { createContext, useState } from "react";
+import { Contact } from "@/pages/contacts/types";
 
 const ContactContext = createContext();
 
-const ContactContextProvider = ({ children }) => {
-  const [contacts, setContacts] = useState([]);
+const ContactContextProvider = ({ children }: React.ReactNode) => {
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
   return (
     <ContactContext.Provider value={{ contacts, setContacts }}>
