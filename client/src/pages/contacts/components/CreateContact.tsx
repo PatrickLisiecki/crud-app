@@ -1,9 +1,11 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-import { createContact } from "../api/createContact";
+// import { createContact } from "../api/createContact";
+// import { ContactContext } from "@/contexts/ContactContext";
 
-import { ContactContext } from "@/contexts/ContactContext";
+// RTQ Query
+import { useAddContactMutation } from "@/redux/services/contacts";
 
 interface CreateContactProps {
   isOpen: boolean;
@@ -11,10 +13,29 @@ interface CreateContactProps {
 }
 
 export const CreateContact = ({ isOpen, toggleIsOpen }: CreateContactProps) => {
-  const { contacts, setContacts } = useContext(ContactContext);
+  // const { contacts, setContacts } = useContext(ContactContext);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
+
+  const [addContact, result] = useAddContactMutation();
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   const data = {
+  //     name: name,
+  //     email: email,
+  //     phoneNumber: phone,
+  //   };
+
+  //   const newContact = await createContact(data);
+
+  //   const newContacts = contacts.slice();
+  //   newContacts.push(newContact);
+  //   setContacts(newContacts);
+  //   toggleIsOpen();
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,11 +46,7 @@ export const CreateContact = ({ isOpen, toggleIsOpen }: CreateContactProps) => {
       phoneNumber: phone,
     };
 
-    const newContact = await createContact(data);
-
-    const newContacts = contacts.slice();
-    newContacts.push(newContact);
-    setContacts(newContacts);
+    await addContact(data);
     toggleIsOpen();
   };
 

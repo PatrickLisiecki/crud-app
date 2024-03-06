@@ -3,7 +3,7 @@ import { Contact } from "@/pages/contacts/types";
 
 const ContactContext = createContext();
 
-const ContactContextProvider = ({ children }: React.ReactNode) => {
+const ContactContextProvider = ({ children }) => {
   const [contacts, setContacts] = useState<Contact[]>([]);
 
   return (
