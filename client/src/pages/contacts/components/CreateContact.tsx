@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-// import { createContact } from "../api/createContact";
-// import { ContactContext } from "@/contexts/ContactContext";
+import * as yup from "yup";
 
 // RTQ Query
 import { useAddContactMutation } from "@/redux/services/contacts";
@@ -12,6 +11,27 @@ interface CreateContactProps {
   toggleIsCreating: () => void;
 }
 
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
+const formSchema = yup.object().shape(
+  {
+    name: yup.string().required("A name is required."),
+    email: yup.string().email("Please enter a valid email."),
+    phoneNumber: yup
+      .string()
+      .matches(phoneRegExp, "Phone number is not valid."),
+    // phoneNumber: yup.string().when("phoneNumber", (val) => {
+    //   if (val.length > 0) {
+    //     return yup.string().matches(phoneRegExp, "Phone number is not valid.");
+    //   } else {
+    //     return yup.string().notRequired();
+    //   }
+    // }),
+  },
+  // [["phoneNumber", "phoneNumber"]],
+);
+
 export const CreateContact = ({
   isCreating,
   toggleIsCreating,
@@ -20,27 +40,11 @@ export const CreateContact = ({
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const [addContact, result] = useAddContactMutation();
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   const data = {
-  //     name: name,
-  //     email: email,
-  //     phoneNumber: phone,
-  //   };
-
-  //   const newContact = await createContact(data);
-
-  //   const newContacts = contacts.slice();
-  //   newContacts.push(newContact);
-  //   setContacts(newContacts);
-  //   toggleIsOpen();
-  // };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreateContact = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const data = {
@@ -49,11 +53,19 @@ export const CreateContact = ({
       phoneNumber: phone,
     };
 
-    await addContact(data);
-    toggleIsCreating();
-    setName("");
-    setEmail("");
-    setPhone("");
+    const contact = await formSchema.validate(data).catch((err) => {
+      const { errors } = err;
+      setError(errors);
+    });
+
+    if (contact) {
+      await addContact(data);
+      toggleIsCreating();
+      setName("");
+      setEmail("");
+      setPhone("");
+      setError("");
+    }
   };
 
   return (
@@ -63,8 +75,14 @@ export const CreateContact = ({
       <div className="mx-4 w-full rounded-lg bg-white p-8 md:max-w-md">
         <h2 className="text-xl font-semibold">Create a Contact</h2>
 
+        <div
+          className={`${error ? "block" : "hidden"} my-2 w-full rounded-lg bg-red-500 p-2 text-sm text-white`}
+        >
+          {error}
+        </div>
+
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleCreateContact}
           className="mt-4 flex flex-col items-center gap-y-2"
         >
           {/* Name Input */}
