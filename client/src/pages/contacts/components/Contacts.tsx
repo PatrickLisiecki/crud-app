@@ -27,7 +27,10 @@ export const Contacts = () => {
           </Link>
         </div>
       </div>
-      <CreateContact isOpen={isCreating} toggleIsOpen={toggleIsCreating} />
+      <CreateContact
+        isCreating={isCreating}
+        toggleIsCreating={toggleIsCreating}
+      />
       <ContactList />
     </div>
   );

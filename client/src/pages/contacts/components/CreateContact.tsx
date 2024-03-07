@@ -8,11 +8,14 @@ import { Button } from "@/components/ui/button";
 import { useAddContactMutation } from "@/redux/services/contacts";
 
 interface CreateContactProps {
-  isOpen: boolean;
-  toggleIsOpen: Function;
+  isCreating: boolean;
+  toggleIsCreating: () => void;
 }
 
-export const CreateContact = ({ isOpen, toggleIsOpen }: CreateContactProps) => {
+export const CreateContact = ({
+  isCreating,
+  toggleIsCreating,
+}: CreateContactProps) => {
   // const { contacts, setContacts } = useContext(ContactContext);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -47,12 +50,15 @@ export const CreateContact = ({ isOpen, toggleIsOpen }: CreateContactProps) => {
     };
 
     await addContact(data);
-    toggleIsOpen();
+    toggleIsCreating();
+    setName("");
+    setEmail("");
+    setPhone("");
   };
 
   return (
     <div
-      className={`${isOpen ? "block" : "hidden"} fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50`}
+      className={`${isCreating ? "block" : "hidden"} fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50`}
     >
       <div className="mx-4 w-full rounded-lg bg-white p-8 md:max-w-md">
         <h2 className="text-xl font-semibold">Create a Contact</h2>
@@ -99,7 +105,7 @@ export const CreateContact = ({ isOpen, toggleIsOpen }: CreateContactProps) => {
               type="button"
               size="lg"
               variant="destructive"
-              onClick={() => toggleIsOpen()}
+              onClick={() => toggleIsCreating()}
             >
               Cancel
             </Button>
